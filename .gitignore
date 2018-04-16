@@ -1,2 +1,21 @@
-WEB-INF/classes/
-WebRoot/.idea
+# Eclipse
+.metadata/
+.settings/
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+.project
+.classpath
+.loadpath
+
+# Java
+## Compiled class file
+*.class
+
+# Maven
+target/
+log/
+test/

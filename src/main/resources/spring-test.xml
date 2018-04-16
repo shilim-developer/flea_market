@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+	<!-- 定义数据源Bean -->
+	<!-- Druid -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/market?serverTimezone=Asia/Shanghai&amp;useSSL=false&amp;characterEncoding=utf8" />
+		<property name="username" value="root" />
+		<property name="password" value="shilim" />
+	</bean>
+
+	<!-- 注册SqlSessionFactoryBean -->
+	<bean id="sqlSessionFactory"
+		class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 自动扫描mappers.xml文件 -->
+		<property name="mapperLocations" value="classpath:com/market/mapper/*.xml" />
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+		<!-- <property name="typeEnumsPackage" value="com.baomidou.springmvc.model.enums"/> -->
+		<!-- 全局配置注入 -->
+		<property name="globalConfig" ref="globalConfig" />
+		<property name="plugins">
+			<array>
+				<!-- 分页插件配置 -->
+				<bean id="paginationInterceptor"
+					class="com.baomidou.mybatisplus.plugins.PaginationInterceptor" />
+				<!-- 乐观锁插件 -->
+				<bean id="optimisticLockerInterceptor"
+					class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor">
+				</bean>
+				<!-- 性能拦截器，兼打印sql，不建议生产环境配置 -->
+				<!-- <bean id="performanceInterceptor"
+					class="com.baomidou.mybatisplus.plugins.PerformanceInterceptor" /> -->
+			</array>
+		</property>
+	</bean>
+
+	<bean id="globalConfig" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
+		<!-- AUTO->`0`("数据库ID自增") INPUT->`1`(用户输入ID") ID_WORKER->`2`("全局唯一ID") 
+			UUID->`3`("全局唯一ID") -->
+		<!-- <property name="idType" value="0" /> -->
+	</bean>
+
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.market.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+
+	<!-- 数据校验 -->
+	<mvc:annotation-driven validator="validator" />
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+		<!--不设置则默认为classpath下的ValidationMessages.properties -->
+		<property name="validationMessageSource" ref="validatemessageSource" />
+		<!-- 设置快速校验模式 -->
+		<property name="validationPropertyMap">
+			<util:map>
+				<entry key="hibernate.validator.fail_fast" value="true" />
+			</util:map>
+		</property>
+	</bean>
+	<bean id="validatemessageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:validatemessages" />
+		<property name="fileEncodings" value="utf-8" />
+		<property name="cacheSeconds" value="120" />
+	</bean>
+
+	<!-- 声明式事务管理 -->
+	<!--定义事物管理器，由spring管理事务 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!--支持注解驱动的事务管理，指定事务管理器 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- 容器自动扫描IOC组件 -->
+	<context:component-scan base-package="com.market">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!--aspectj支持自动代理实现AOP功能 -->
+	<aop:aspectj-autoproxy proxy-target-class="true"></aop:aspectj-autoproxy>
+</beans>
