@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.market.constant.ResultCode;
 import com.market.exception.ParamsException;
 import com.market.model.ResultMessage;
 import com.market.utils.JsonUtil;
@@ -20,9 +21,9 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
 		PrintWriter wirter = null;
 		ResultMessage<String> resultMessage;
 		if(exception instanceof ParamsException) {
-			resultMessage = new ResultMessage<String>(true, null, exception.getMessage(), null);
+			resultMessage = new ResultMessage<String>(true, ResultCode.FAIL, exception.getMessage(), null);
 		} else {
-			resultMessage = new ResultMessage<String>(true, null, "系统错误", null);
+			resultMessage = new ResultMessage<String>(true, ResultCode.FAIL, "系统错误", null);
 		}
 		if(exception != null) {
 			try {

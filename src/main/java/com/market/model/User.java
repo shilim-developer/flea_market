@@ -50,40 +50,45 @@ public class User extends Model<User> {
         return uId;
     }
 
-    public void setuId(Integer uId) {
+    public User setuId(Integer uId) {
         this.uId = uId;
+        return this;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public User setUsername(String username) {
         this.username = username;
+        return this;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public User setPassword(String password) {
         this.password = password;
+        return this;
     }
 
     public String getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public User setPhone(String phone) {
         this.phone = phone;
+        return this;
     }
 
     public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public User setStatus(Integer status) {
         this.status = status;
+        return this;
     }
 
     @Override

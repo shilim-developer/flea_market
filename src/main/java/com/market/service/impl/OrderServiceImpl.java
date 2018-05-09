@@ -1,18 +1,22 @@
 package com.market.service.impl;
 
-import com.market.model.Order;
-import com.market.model.ResultMessage;
-import com.market.constant.ResultCode;
-import com.market.dao.OrderDao;
-import com.market.exception.ParamsException;
-import com.market.service.IOrderService;
-import com.market.utils.ValidatorUtil;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.market.constant.ResultCode;
+import com.market.dao.OrderDao;
+import com.market.exception.ParamsException;
+import com.market.model.Good;
+import com.market.model.Order;
+import com.market.model.ResultMessage;
+import com.market.service.IOrderService;
+import com.market.utils.TimeUtil;
+import com.market.utils.ValidatorUtil;
 
 /**
  * <p>
@@ -37,8 +41,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements IO
 	@Override
 	public ResultMessage<String> addOrder(Order order) throws ParamsException {
 		validatorUtil.validate(order);
-		insert(order);
-		return new ResultMessage<String>(true, ResultCode.SUCCESS, "下单成功", null);
+		System.out.println(order);
+		Good good = new Good().setgId(order.getGoodId()).selectById();
+		ResultMessage<String> resultMessage;
+		if(good.getGoodSurplus()>0) {
+			String orderNum = UUID.randomUUID()+"";
+			insert(order.setOrderNumber(orderNum));
+			order = order.selectOne(new EntityWrapper<Order>().eq("order_number", orderNum));
+			order.setOrderNumber(TimeUtil.getCurrentTimeString("yyyyMMddHHmmss") + order.getGoodId() + order.getoId()).updateById();
+			resultMessage = new ResultMessage<String>(true, ResultCode.SUCCESS, "下单成功", null);
+		} else {
+			resultMessage = new ResultMessage<String>(true, ResultCode.FAIL, "商品余量不足", null);
+		}
+		return resultMessage;
 	}
 
 	@Override

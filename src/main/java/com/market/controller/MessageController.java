@@ -3,14 +3,17 @@ package com.market.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.google.gson.reflect.TypeToken;
 import com.market.model.Message;
 import com.market.model.ResultMessage;
+import com.market.model.User;
 import com.market.service.IMessageService;
 import com.market.utils.JsonUtil;
 
@@ -22,29 +25,42 @@ import com.market.utils.JsonUtil;
  * @author liwei
  * @since 2018-04-16
  */
-@Controller
+@RestController
 @RequestMapping("/message")
 public class MessageController {
 	@Autowired
 	IMessageService messageService;
 	
 	@RequestMapping("/getPageMessageListByToUser")
-	public ResultMessage<Page<Message>> getPageMessageListByToUser(String page, String message) throws Exception {
+	public ResultMessage<Page<Message>> getPageMessageListByToUser(String page, HttpSession session) throws Exception {
+		Message message = new Message().setToUser(((User)session.getAttribute("user")).getuId());
 		return messageService.getPageMessageListByToUser(
 				JsonUtil.jsonToObject(page, new TypeToken<Page<Message>>(){}.getType()), 
-				JsonUtil.jsonToObject(message, Message.class));
+				message);
 	}
 	
-	@RequestMapping("/getPageMessageListByToUser")
+	@RequestMapping("/getPageMessageListByStatus")
 	public ResultMessage<Page<Message>> getPageMessageListByStatus(String page, String message) throws Exception {
 		return messageService.getPageMessageListByStatus(
 				JsonUtil.jsonToObject(page, new TypeToken<Page<Message>>(){}.getType()), 
 				JsonUtil.jsonToObject(message, Message.class));
 	}
 	
+	@RequestMapping("/getMessageById")
+	public ResultMessage<Message> getMessageById(String message) throws Exception {
+		return messageService.getMessageById(JsonUtil.jsonToObject(message, Message.class));
+	}
+	
 	@RequestMapping("/sendMessage")
-	public ResultMessage<String> sendMessage(String message) throws Exception {
-		return messageService.sendMessage(JsonUtil.jsonToObject(message, Message.class));
+	public ResultMessage<String> sendMessage(String message,HttpSession session) throws Exception {
+		Message rMessage = JsonUtil.jsonToObject(message, Message.class);
+		rMessage.setFromUser(((User)session.getAttribute("user")).getuId());
+		return messageService.sendMessage(rMessage);
+	}
+	
+	@RequestMapping("/readMessage")
+	public ResultMessage<String> readMessage(String message) throws Exception {
+		return messageService.readMessage(JsonUtil.jsonToObject(message, Message.class));
 	}
 	
 	@RequestMapping("/deleteMessage")

@@ -4,8 +4,8 @@ package com.market.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.reflect.TypeToken;
 import com.market.model.Classify;
@@ -21,7 +21,7 @@ import com.market.utils.JsonUtil;
  * @author liwei
  * @since 2018-04-10
  */
-@Controller
+@RestController
 @RequestMapping("/classify")
 public class ClassifyController {
 	@Autowired

@@ -30,13 +30,18 @@ public class Message extends Model<Message> {
     /**
      * 创建时间
      */
-    @TableField("create_tiem")
-    private Date createTiem;
+    @TableField(value="create_time",update="%s")
+    private Date createTime;
     /**
      * 来自用户id
      */
     @TableField("from_user")
     private Integer fromUser;
+    /**
+     * 来自用户实体
+     */
+    @TableField(exist = false)
+    private User fUser;
     /**
      * 目的用户id
      */
@@ -67,12 +72,12 @@ public class Message extends Model<Message> {
         return this;
     }
 
-    public Date getCreateTiem() {
-        return createTiem;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public Message setCreateTiem(Date createTiem) {
-        this.createTiem = createTiem;
+    public Message setCreateTime(Date createTime) {
+        this.createTime = createTime;
         return this;
     }
 
@@ -82,6 +87,15 @@ public class Message extends Model<Message> {
 
     public Message setFromUser(Integer fromUser) {
         this.fromUser = fromUser;
+        return this;
+    }
+    
+    public User getFUser() {
+        return fUser;
+    }
+    
+    public Message setFUser(User fUser) {
+        this.fUser = fUser;
         return this;
     }
 
@@ -113,7 +127,7 @@ public class Message extends Model<Message> {
         return "Message{" +
         ", mId=" + mId +
         ", content=" + content +
-        ", createTiem=" + createTiem +
+        ", createTime=" + createTime +
         ", fromUser=" + fromUser +
         ", toUser=" + toUser +
         ", status=" + status +

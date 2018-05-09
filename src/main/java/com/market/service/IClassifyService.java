@@ -24,4 +24,5 @@ public interface IClassifyService extends IService<Classify> {
 	public abstract ResultMessage<String> addClassify(Classify classify) throws ParamsException;
 	public abstract ResultMessage<String> updateClassify(Classify classify) throws ParamsException;
 	public abstract ResultMessage<String> deleteClassify(List<Classify> classifies) throws ParamsException;
+	public abstract ResultMessage<List<Classify>> getClassifyLike(Classify classify);
 }

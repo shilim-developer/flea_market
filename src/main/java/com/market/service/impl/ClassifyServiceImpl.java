@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.market.constant.ResultCode;
@@ -67,6 +68,12 @@ public class ClassifyServiceImpl extends ServiceImpl<ClassifyDao, Classify> impl
 		}
 		deleteBatchIds(ids);
 		return new ResultMessage<String>(true, ResultCode.SUCCESS, "删除成功", null);
+	}
+
+	@Override
+	public ResultMessage<List<Classify>> getClassifyLike(Classify classify) {
+		return new ResultMessage<List<Classify>>(true, ResultCode.SUCCESS, "获取成功", 
+				selectList(new EntityWrapper<Classify>().like("classify_name", classify.getClassifyName())));
 	}
 
 }

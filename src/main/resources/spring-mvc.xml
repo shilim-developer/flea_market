@@ -29,6 +29,14 @@
 			</list>
 		</property>
 	</bean>
+	<!-- 配置拦截器 -->
+	<mvc:interceptors>
+		<!-- 配置登陆拦截器 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="com.market.interceptor.LoginHandlerInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
 	<!-- 定义跳转的文件的前后缀 ，视图模式配置 -->
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -37,7 +45,28 @@
 		<property name="suffix" value=".jsp" />
 	</bean>
 
-	<mvc:annotation-driven validator="validator" />
+	<!-- <mvc:annotation-driven validator="validator" /> -->
+	<!-- 注册MVC注解驱动 -->
+	<mvc:annotation-driven validator="validator">
+		<!-- 解决responsebody 返回中文乱码问题 -->
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes" value="text/html;charset=UTF-8" />
+			</bean>
+			<bean
+				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+						<property name="dateFormat">
+							<bean class="java.text.SimpleDateFormat">
+								<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
+							</bean>
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
 	<!-- 数据校验 -->
 	<bean id="validator"
 		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">

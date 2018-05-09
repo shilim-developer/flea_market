@@ -37,6 +37,11 @@ public class Good extends Model<Good> {
     @TableField("good_count")
     private Integer goodCount;
     /**
+     * 商品数量
+     */
+    @TableField("good_surplus")
+    private Integer goodSurplus;
+    /**
      * 商品描述
      */
     @TableField("good_description")
@@ -98,6 +103,15 @@ public class Good extends Model<Good> {
         this.goodCount = goodCount;
         return this;
     }
+    
+    public Integer getGoodSurplus() {
+        return goodSurplus;
+    }
+
+    public Good setGoodSurplus(Integer goodSurplus) {
+        this.goodSurplus = goodSurplus;
+        return this;
+    }
 
     public String getGoodDescription() {
         return goodDescription;
@@ -156,6 +170,7 @@ public class Good extends Model<Good> {
         ", goodName=" + goodName +
         ", goodPrice=" + goodPrice +
         ", goodCount=" + goodCount +
+        ", goodSurplus=" + goodSurplus +
         ", goodDescription=" + goodDescription +
         ", goodPics=" + goodPics +
         ", status=" + status +

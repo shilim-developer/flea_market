@@ -14,6 +14,7 @@ import com.market.dao.MessageDao;
 import com.market.exception.ParamsException;
 import com.market.model.Message;
 import com.market.model.ResultMessage;
+import com.market.model.User;
 import com.market.service.IMessageService;
 import com.market.utils.ValidatorUtil;
 
@@ -33,8 +34,13 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, Message> impleme
 	@Override
 	public ResultMessage<Page<Message>> getPageMessageListByToUser(Page<Message> page, Message message) throws ParamsException {
 		validatorUtil.validate(message);
-		return new ResultMessage<Page<Message>>(true,ResultCode.SUCCESS,"获取成功",
-				selectPage(page, new EntityWrapper<Message>().eq("to_user", message.getToUser())));
+		Page<Message> rPage = selectPage(page, new EntityWrapper<Message>().eq("to_user", message.getToUser()));
+		List<Message> records = rPage.getRecords();
+		for(int i =0;i<records.size();i++) {
+			records.get(i).setFUser(new User().setuId(records.get(i).getFromUser()).selectById().setPassword(null));
+		}
+		rPage.setRecords(records);
+		return new ResultMessage<Page<Message>>(true,ResultCode.SUCCESS,"获取成功",rPage);
 	}
 
 	@Override
@@ -45,10 +51,24 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, Message> impleme
 	}
 
 	@Override
+	public ResultMessage<Message> getMessageById(Message message) throws ParamsException {
+		message = message.selectById();
+		message.setFUser(new User().setuId(message.getFromUser()).selectById());
+		return new ResultMessage<Message>(true,ResultCode.SUCCESS,"获取成功", message);
+	}
+	
+	@Override
 	public ResultMessage<String> sendMessage(Message message) throws ParamsException {
 		validatorUtil.validate(message);
 		insert(message);
 		return new ResultMessage<String>(true, ResultCode.SUCCESS, "添加成功", null);
+	}
+	
+	@Override
+	public ResultMessage<String> readMessage(Message message) throws ParamsException {
+		validatorUtil.validate(message);
+		updateById(message.setStatus(1));
+		return new ResultMessage<String>(true, ResultCode.SUCCESS, "阅读成功", null);
 	}
 
 	@Override
@@ -61,5 +81,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, Message> impleme
 		deleteBatchIds(ids);
 		return new ResultMessage<String>(true, ResultCode.SUCCESS, "删除成功", null);
 	}
+
+
 
 }

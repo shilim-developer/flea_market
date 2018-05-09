@@ -33,7 +33,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 		validatorUtil.validate(user,User.Register.class);
 		User rUser = user.selectOne(new EntityWrapper<User>().eq("username", user.getUsername()));
 		ResultMessage<String> resultMessage;
-		if(rUser != null) {
+		if(rUser == null) {
 			user.insert();
 			resultMessage = new ResultMessage<String>(true,ResultCode.SUCCESS,"注册成功",null);
 		} else {
@@ -52,9 +52,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 		ResultMessage<User> resultMessage;
 		if(rUser != null) {
 			session.setAttribute("user", rUser);
-			resultMessage = new ResultMessage<User>(true,ResultCode.SUCCESS,"登录成功",null);
+			rUser.setPassword(null);
+			resultMessage = new ResultMessage<User>(true,ResultCode.SUCCESS,"登录成功",rUser);
 		} else {
-			resultMessage = new ResultMessage<User>(true,ResultCode.SUCCESS,"账号或者密码错误",null);
+			resultMessage = new ResultMessage<User>(true,ResultCode.FAIL,"账号或者密码错误",null);
 		}
 		return resultMessage;
 	}
@@ -62,6 +63,19 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 	@Override
 	public ResultMessage<String> logout(HttpSession session) {
 		return new ResultMessage<String>(false,ResultCode.SUCCESS,"注销成功",null);
+	}
+
+	@Override
+	public ResultMessage<User> getUser(HttpSession session) {
+		User user = (User) session.getAttribute("user");
+		ResultMessage<User> resultMessage;
+		if(user == null) {
+			resultMessage = new ResultMessage<User>(true,ResultCode.NO_LOGIN,"尚未登录",null);
+		} else {
+			user.setPassword(null);
+			resultMessage = new ResultMessage<User>(true,ResultCode.SUCCESS,"获取成功",user);
+		}
+		return resultMessage;
 	}
 
 }

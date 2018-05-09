@@ -20,4 +20,5 @@ public interface IUserService extends IService<User> {
 	public abstract ResultMessage<String> register(User user) throws ParamsException;
 	public abstract ResultMessage<User> login(User user,HttpSession session) throws ParamsException;
 	public abstract ResultMessage<String> logout(HttpSession session);
+	public abstract ResultMessage<User> getUser(HttpSession session);
 }

@@ -5,6 +5,9 @@ import com.market.model.Good;
 import com.market.model.ResultMessage;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
@@ -20,8 +23,10 @@ import com.baomidou.mybatisplus.service.IService;
 public interface IGoodService extends IService<Good> {
 	public abstract ResultMessage<List<Good>> getAllGood();
 	public abstract ResultMessage<Page<Good>> getGoodByPage(Page<Good> page);
-	public abstract ResultMessage<Good> getGoodById(Good good);
-	public abstract ResultMessage<String> addGood(Good good) throws ParamsException;
+	public abstract ResultMessage<Page<Good>> getGoodByPageByGood(Page<Good> page,Good good);
+	public abstract ResultMessage<Page<Good>> getPageGoodByClassify(Page<Good> page,Good good);
+	public abstract ResultMessage<Map<String,Object>> getGoodById(Good good);
+	public abstract ResultMessage<String> addGood(Good good,HttpServletRequest request) throws ParamsException;
 	public abstract ResultMessage<String> updateGood(Good good) throws ParamsException;
 	public abstract ResultMessage<String> deleteGood(List<Good> goods) throws ParamsException;
 }

@@ -19,6 +19,8 @@ import com.market.model.ResultMessage;
 public interface IMessageService extends IService<Message> {
 	public abstract ResultMessage<Page<Message>> getPageMessageListByToUser(Page<Message> page, Message message) throws ParamsException;
 	public abstract ResultMessage<Page<Message>> getPageMessageListByStatus(Page<Message> page, Message message) throws ParamsException;
+	public abstract ResultMessage<Message> getMessageById(Message message) throws ParamsException;
 	public abstract ResultMessage<String> sendMessage(Message message) throws ParamsException;
+	public abstract ResultMessage<String> readMessage(Message message) throws ParamsException;
 	public abstract ResultMessage<String> deleteMessage(List<Message> messages) throws ParamsException;
 }
