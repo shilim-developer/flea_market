@@ -67,5 +67,10 @@ public class MessageController {
 	public ResultMessage<String> deleteMessage(String messages) throws Exception {
 		return messageService.deleteMessage(JsonUtil.jsonToObject(messages, new TypeToken<List<Message>>(){}.getType()));
 	}
+	
+	@RequestMapping("/admin/sendSystemMessage")
+	public ResultMessage<String> sendSystemMessage(String message) throws Exception {
+		return messageService.sendSystemMessage(JsonUtil.jsonToObject(message, Message.class));
+	}
 }
 

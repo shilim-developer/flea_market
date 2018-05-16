@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.google.gson.reflect.TypeToken;
 import com.market.model.Classify;
 import com.market.model.ResultMessage;
@@ -32,17 +33,22 @@ public class ClassifyController {
 		return classifyService.getAllClassify();
 	}
 	
+	@RequestMapping("/admin/getClassifyByPage")
+	public ResultMessage<Page<Classify>> getClassifyByPage(String page) throws Exception {
+		return classifyService.getClassifyByPage(JsonUtil.jsonToObject(page, new TypeToken<Page<Classify>>(){}.getType()));
+	}
+	
 	@RequestMapping("/getClassifyById")
 	public ResultMessage<Classify> getClassifyById(String classify) throws Exception {
 		return classifyService.getClassifyById(JsonUtil.jsonToObject(classify, Classify.class));
 	} 
 	
-	@RequestMapping("/addClassify")
+	@RequestMapping("/admin/addClassify")
 	public ResultMessage<String> addClassify(String classify) throws Exception {
 		return classifyService.addClassify(JsonUtil.jsonToObject(classify, Classify.class));
 	}
 	
-	@RequestMapping("/updateClassify")
+	@RequestMapping("/admin/updateClassify")
 	public ResultMessage<String> updateClassify(String classify) throws Exception {
 		return classifyService.updateClassify(JsonUtil.jsonToObject(classify, Classify.class));
 	}

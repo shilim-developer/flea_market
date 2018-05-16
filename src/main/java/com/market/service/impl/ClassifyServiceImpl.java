@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.market.constant.ResultCode;
@@ -37,7 +38,14 @@ public class ClassifyServiceImpl extends ServiceImpl<ClassifyDao, Classify> impl
 
 	@Override
 	public ResultMessage<Page<Classify>> getClassifyByPage(Page<Classify> page) {
-		return new ResultMessage<Page<Classify>>(true, ResultCode.SUCCESS, "获取成功", selectPage(page));
+		String keyword = (String)page.getCondition().get("keyword");
+		Wrapper<Classify> wapper = new EntityWrapper<Classify>();
+		if(keyword != null && keyword != "") {
+			wapper = wapper.like("classify_name", keyword);
+		}
+		page.setCondition(null);
+		page = selectPage(page,wapper);
+		return new ResultMessage<Page<Classify>>(true, ResultCode.SUCCESS, "获取成功", page);
 	}
 	
 	@Override

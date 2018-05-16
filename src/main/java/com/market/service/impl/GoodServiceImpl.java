@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.market.constant.ResultCode;
@@ -44,7 +45,20 @@ public class GoodServiceImpl extends ServiceImpl<GoodDao, Good> implements IGood
 
 	@Override
 	public ResultMessage<Page<Good>> getGoodByPage(Page<Good> page) {
-		return new ResultMessage<Page<Good>>(true, ResultCode.SUCCESS, "获取成功", selectPage(page));
+		String keyword = (String)page.getCondition().get("keyword");
+		if(keyword != null && keyword != "") {
+			page.setCondition(null);
+			page = selectPage(page,new EntityWrapper<Good>().like("good_name", keyword));
+		} else {
+			page.setCondition(null);
+			page = selectPage(page);
+		}
+		List<Good> records = page.getRecords();
+		for(int i =0;i<records.size();i++) {
+			records.get(i).setFUser(new User().setuId(records.get(i).getuId()).selectById().setPassword(null));
+		}
+		page.setRecords(records);
+		return new ResultMessage<Page<Good>>(true, ResultCode.SUCCESS, "获取成功", page);
 	}
 	
 	@Override
@@ -54,9 +68,39 @@ public class GoodServiceImpl extends ServiceImpl<GoodDao, Good> implements IGood
 	}
 	
 	@Override
+	public ResultMessage<Page<Good>> getCheckGoodByPage(Page<Good> page) {
+		String keyword = (String)page.getCondition().get("keyword");
+		Wrapper<Good> wapper = new EntityWrapper<Good>().eq("status", 0);
+		if(keyword != null && keyword != "") {
+			wapper = wapper.like("good_name", keyword);
+		}
+		page.setCondition(null);
+		page = selectPage(page,wapper);
+		List<Good> records = page.getRecords();
+		for(int i =0;i<records.size();i++) {
+			records.get(i).setFUser(new User().setuId(records.get(i).getuId()).selectById().setPassword(null));
+		}
+		page.setRecords(records);
+		return new ResultMessage<Page<Good>>(true, ResultCode.SUCCESS, "获取成功", page);
+	}
+	
+	@Override
 	public ResultMessage<Page<Good>> getPageGoodByClassify(Page<Good> page, Good good) {
-		return new ResultMessage<Page<Good>>(true, ResultCode.SUCCESS, "获取成功", good.getcId() == 0? selectPage(page): selectPage(page,
-				new EntityWrapper<Good>().eq("c_id", good.getcId())));
+		Wrapper<Good> wapper = new EntityWrapper<Good>();
+		if(good.getcId() > 0) {
+			wapper = wapper.eq("c_id", good.getcId());
+		}
+		if(good.getGoodName() != null && good.getGoodName() != "") {
+			wapper = wapper.like("good_name", good.getGoodName());
+		}
+		page = selectPage(page,wapper);
+		List<Good> records = page.getRecords();
+		for(int i =0;i<records.size();i++) {
+			System.out.println(records.get(i).getuId());
+			records.get(i).setFUser(new User().setuId(records.get(i).getuId()).selectById().setPassword(null));
+		}
+		page.setRecords(records);
+		return new ResultMessage<Page<Good>>(true, ResultCode.SUCCESS, "获取成功", page);
 	}
 
 	@Override
@@ -102,6 +146,23 @@ public class GoodServiceImpl extends ServiceImpl<GoodDao, Good> implements IGood
 		deleteBatchIds(ids);
 		return new ResultMessage<String>(true, ResultCode.SUCCESS, "删除成功", null);
 	}
+
+	@Override
+	public ResultMessage<String> passCheck(Good good) throws ParamsException {
+		validatorUtil.validate(good);
+		good.setStatus(1);
+		updateById(good);
+		return new ResultMessage<String>(true, ResultCode.SUCCESS, "通过审核成功", null);
+	}
+
+	@Override
+	public ResultMessage<String> unpassCheck(Good good) throws ParamsException {
+		validatorUtil.validate(good);
+		good.setStatus(2);
+		updateById(good);
+		return new ResultMessage<String>(true, ResultCode.SUCCESS, "拒绝通过审核成功", null);
+	}
+
 
 
 

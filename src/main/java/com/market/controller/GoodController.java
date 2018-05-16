@@ -55,6 +55,11 @@ public class GoodController {
 				new Good().setuId(((User)session.getAttribute("user")).getuId()));
 	}
 	
+	@RequestMapping("admin/getCheckGoodByPage")
+	public ResultMessage<Page<Good>> getCheckGoodByPage(String page) throws Exception {
+		return goodService.getCheckGoodByPage(JsonUtil.jsonToObject(page, new TypeToken<Page<Good>>(){}.getType()));
+	}
+	
 	@RequestMapping("/getGoodById")
 	public ResultMessage<Map<String,Object>> getGoodById(String good) throws Exception {
 		return goodService.getGoodById(JsonUtil.jsonToObject(good,Good.class));
@@ -75,6 +80,16 @@ public class GoodController {
 	@RequestMapping("/deleteGood")
 	public ResultMessage<String> deleteGood(String goods) throws Exception {
 		return goodService.deleteGood(JsonUtil.jsonToObject(goods,new TypeToken<List<Good>>(){}.getType()));
+	}
+	
+	@RequestMapping("/admin/passCheck")
+	public ResultMessage<String> passCheck(String good) throws Exception {
+		return goodService.passCheck(JsonUtil.jsonToObject(good,Good.class));
+	}
+	
+	@RequestMapping("/admin/unpassCheck")
+	public ResultMessage<String> unpassCheck(String good) throws Exception {
+		return goodService.unpassCheck(JsonUtil.jsonToObject(good,Good.class));
 	}
 }
 

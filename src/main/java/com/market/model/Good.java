@@ -1,6 +1,7 @@
 package com.market.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
@@ -62,11 +63,20 @@ public class Good extends Model<Good> {
     @TableField("u_id")
     private Integer uId;
     /**
+     * 所属用户实体
+     */
+    @TableField(exist = false)
+    private User fUser;
+    /**
      * 所属分类id
      */
     @TableField("c_id")
     private Integer cId;
-
+    /**
+	 * 创建时间
+	 */
+	@TableField(value="create_time",update="%s")
+	private Date createTime;
 
     public Integer getgId() {
         return gId;
@@ -148,6 +158,15 @@ public class Good extends Model<Good> {
         this.uId = uId;
         return this;
     }
+    
+    public User getFUser() {
+        return fUser;
+    }
+    
+    public Good setFUser(User fUser) {
+        this.fUser = fUser;
+        return this;
+    }
 
     public Integer getcId() {
         return cId;
@@ -157,6 +176,15 @@ public class Good extends Model<Good> {
         this.cId = cId;
         return this;
     }
+    
+    public Date getCreateTime() {
+		return createTime;
+	}
+
+	public Good setCreateTime(Date createTime) {
+		this.createTime = createTime;
+		return this;
+	}
 
     @Override
     protected Serializable pkVal() {
@@ -175,7 +203,9 @@ public class Good extends Model<Good> {
         ", goodPics=" + goodPics +
         ", status=" + status +
         ", uId=" + uId +
+        ", user=" + fUser +
         ", cId=" + cId +
+        ", createTime=" + createTime +
         "}";
     }
 }

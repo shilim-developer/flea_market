@@ -62,6 +62,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
 	@Override
 	public ResultMessage<String> logout(HttpSession session) {
+		session.removeAttribute("user");
 		return new ResultMessage<String>(false,ResultCode.SUCCESS,"注销成功",null);
 	}
 

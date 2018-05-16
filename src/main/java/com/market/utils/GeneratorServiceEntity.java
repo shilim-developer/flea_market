@@ -15,7 +15,7 @@ public class GeneratorServiceEntity {
     public void generateCode() {
         String packageName = "com.market";
         boolean serviceNameStartWithI = false;//user -> UserService, 设置成true: user -> IUserService
-        generateByTables(serviceNameStartWithI, packageName, "good","message");
+        generateByTables(serviceNameStartWithI, packageName, "admin");
     }
 
     private void generateByTables(boolean serviceNameStartWithI, String packageName, String... tableNames) {
@@ -49,8 +49,8 @@ public class GeneratorServiceEntity {
                 .setPackageInfo(
                         new PackageConfig()
                                 .setParent(packageName)
-                                .setController("controllernone")
-                                .setService("servicenone")
+                                .setController("controller")
+                                .setService("service")
                                 .setEntity("model")
                                 .setMapper("dao")
                                 .setXml("mapper")

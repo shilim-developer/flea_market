@@ -23,4 +23,5 @@ public interface IMessageService extends IService<Message> {
 	public abstract ResultMessage<String> sendMessage(Message message) throws ParamsException;
 	public abstract ResultMessage<String> readMessage(Message message) throws ParamsException;
 	public abstract ResultMessage<String> deleteMessage(List<Message> messages) throws ParamsException;
+	public abstract ResultMessage<String> sendSystemMessage(Message message) throws ParamsException;
 }

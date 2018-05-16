@@ -10,6 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.market.constant.ResultCode;
+import com.market.model.Admin;
 import com.market.model.ResultMessage;
 import com.market.model.User;
 import com.market.utils.JsonUtil;
@@ -39,17 +40,32 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 		System.out.println(requestURI+"###########");
 		if (requestURI.indexOf(".do") > 0 && requestURI.indexOf("login") <= 0 && requestURI.indexOf("register") <= 0) {
 			HttpSession session = request.getSession();
-			User user = (User) session.getAttribute("user");
-			if (user != null) {
-				System.out.println("已登录");
-				return true;
-			} else {
-				response.setContentType("text/html;charset=UTF8");
-				PrintWriter out = response.getWriter();
-				out.write(JsonUtil.objectToJson(new ResultMessage<String>(false, ResultCode.NO_LOGIN, "没有登录", null)));
-				out.flush();
-				out.close();
-				return false;
+			if(requestURI.indexOf("/admin") > 0) {
+				Admin admin = (Admin) session.getAttribute("admin");
+				if (admin != null) {
+					System.out.println("已登录");
+					return true;
+				} else {
+					response.setContentType("text/html;charset=UTF8");
+					PrintWriter out = response.getWriter();
+					out.write(JsonUtil.objectToJson(new ResultMessage<String>(false, ResultCode.NO_LOGIN, "没有登录", null)));
+					out.flush();
+					out.close();
+					return false;
+				}
+			} else{
+				User user = (User) session.getAttribute("user");
+				if (user != null) {
+					System.out.println("已登录");
+					return true;
+				} else {
+					response.setContentType("text/html;charset=UTF8");
+					PrintWriter out = response.getWriter();
+					out.write(JsonUtil.objectToJson(new ResultMessage<String>(false, ResultCode.NO_LOGIN, "没有登录", null)));
+					out.flush();
+					out.close();
+					return false;
+				}
 			}
 		}else {
 			return true;

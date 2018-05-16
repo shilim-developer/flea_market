@@ -37,7 +37,11 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, Message> impleme
 		Page<Message> rPage = selectPage(page, new EntityWrapper<Message>().eq("to_user", message.getToUser()));
 		List<Message> records = rPage.getRecords();
 		for(int i =0;i<records.size();i++) {
-			records.get(i).setFUser(new User().setuId(records.get(i).getFromUser()).selectById().setPassword(null));
+			if(records.get(i).getFromUser() == null) {
+				records.get(i).setFUser(new User().setuId(0).setUsername("系统消息"));
+			} else {
+				records.get(i).setFUser(new User().setuId(records.get(i).getFromUser()).selectById().setPassword(null));
+			}
 		}
 		rPage.setRecords(records);
 		return new ResultMessage<Page<Message>>(true,ResultCode.SUCCESS,"获取成功",rPage);
@@ -53,7 +57,11 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, Message> impleme
 	@Override
 	public ResultMessage<Message> getMessageById(Message message) throws ParamsException {
 		message = message.selectById();
-		message.setFUser(new User().setuId(message.getFromUser()).selectById());
+		if(message.getFromUser() == null) {
+			message.setFUser(new User().setuId(0).setUsername("系统消息"));
+		} else {
+			message.setFUser(new User().setuId(message.getFromUser()).selectById());
+		}
 		return new ResultMessage<Message>(true,ResultCode.SUCCESS,"获取成功", message);
 	}
 	
@@ -80,6 +88,13 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, Message> impleme
 		}
 		deleteBatchIds(ids);
 		return new ResultMessage<String>(true, ResultCode.SUCCESS, "删除成功", null);
+	}
+
+	@Override
+	public ResultMessage<String> sendSystemMessage(Message message) throws ParamsException {
+		validatorUtil.validate(message);
+		insert(message);
+		return new ResultMessage<String>(true, ResultCode.SUCCESS, "发送成功", null);
 	}
 
 
