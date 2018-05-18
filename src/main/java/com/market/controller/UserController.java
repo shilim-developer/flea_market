@@ -29,7 +29,6 @@ public class UserController {
 	
 	@RequestMapping("/register")
 	public ResultMessage<String> register(String user) throws Exception {
-		System.out.println(user);
 		return userService.register(JsonUtil.jsonToObject(user, User.class));
 	}
 	
@@ -46,6 +45,16 @@ public class UserController {
 	@RequestMapping("/getUserInfo")
 	public ResultMessage<User> getUserInfo(HttpSession session) throws Exception {
 		return userService.getUser(session);
+	}
+	
+	@RequestMapping("/updatePassword")
+	public ResultMessage<String> updatePassword(String user,HttpSession session) throws Exception {
+		return userService.updatePassword(JsonUtil.jsonToObject(user, User.class),session);
+	}
+	
+	@RequestMapping("/updatePhone")
+	public ResultMessage<String> updatePhone(String user,HttpSession session) throws Exception {
+		return userService.updatePhone(JsonUtil.jsonToObject(user, User.class),session);
 	}
 }
 

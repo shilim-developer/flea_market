@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 
 import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.enums.IdType;
 
@@ -33,6 +34,11 @@ public class User extends Model<User> {
     @NotNull(message="密码不能为空",groups={Login.class,Register.class})
     private String password;
     /**
+     * 旧密码
+     */
+    @TableField(exist=false)
+    private String oldPassword;
+	/**
      * 联系方式
      */
     @NotNull(message="手机号不能为空",groups={Register.class})
@@ -72,6 +78,14 @@ public class User extends Model<User> {
         this.password = password;
         return this;
     }
+    
+    public String getOldPassword() {
+		return oldPassword;
+	}
+
+	public void setOldPassword(String oldPassword) {
+		this.oldPassword = oldPassword;
+	}
 
     public String getPhone() {
         return phone;

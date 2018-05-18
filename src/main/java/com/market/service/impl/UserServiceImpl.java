@@ -73,10 +73,35 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 		if(user == null) {
 			resultMessage = new ResultMessage<User>(true,ResultCode.NO_LOGIN,"尚未登录",null);
 		} else {
-			user.setPassword(null);
-			resultMessage = new ResultMessage<User>(true,ResultCode.SUCCESS,"获取成功",user);
+			resultMessage = new ResultMessage<User>(true,ResultCode.SUCCESS,"获取成功",user.selectById().setPassword(null));
 		}
 		return resultMessage;
+	}
+
+	@Override
+	public ResultMessage<String> updatePassword(User user,HttpSession session) throws ParamsException {
+		validatorUtil.validate(user);
+		User rUser = (User) session.getAttribute("user");
+		rUser = rUser.selectById();
+		ResultMessage<String> resultMessage = null;
+		if(rUser.getPassword().equals(user.getPassword())) {
+			rUser.setPassword(user.getPassword());
+			updateById(rUser);
+			resultMessage = new ResultMessage<String>(false,ResultCode.SUCCESS,"修改成功",null);
+		} else {
+			resultMessage = new ResultMessage<String>(false,ResultCode.FAIL,"旧密码不正确",null);
+		}
+		return resultMessage;
+	}
+
+	@Override
+	public ResultMessage<String> updatePhone(User user,HttpSession session) throws ParamsException {
+		validatorUtil.validate(user);
+		User rUser = (User) session.getAttribute("user");
+		rUser = rUser.selectById();
+		rUser.setPhone(user.getPhone());
+		updateById(rUser);
+		return new ResultMessage<String>(false,ResultCode.SUCCESS,"修改成功",null);
 	}
 
 }

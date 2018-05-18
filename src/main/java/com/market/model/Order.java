@@ -90,6 +90,11 @@ public class Order extends Model<Order> {
 	@TableField("phone")
 	private String phone;
 	/**
+	 * 支付序列号
+	 */
+	@TableField("pay_serials_number")
+	private String paySerialsNumber;
+	/**
 	 * 状态
 	 */
 	@TableField("status")
@@ -225,6 +230,14 @@ public class Order extends Model<Order> {
 		return this;
 	}
 
+	public String getPaySerialsNumber() {
+		return paySerialsNumber;
+	}
+
+	public void setPaySerialsNumber(String paySerialsNumber) {
+		this.paySerialsNumber = paySerialsNumber;
+	}
+	
 	public Integer getStatus() {
 		return status;
 	}
@@ -256,6 +269,7 @@ public class Order extends Model<Order> {
 				", soldUserId=" + soldUserId +
 				", address=" + address +
 				", phone=" + phone +
+				", paySerialsNumber=" + paySerialsNumber +
 				", status=" + status +
 				"}";
 	}

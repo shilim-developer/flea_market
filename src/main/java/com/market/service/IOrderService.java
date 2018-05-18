@@ -17,9 +17,12 @@ import com.baomidou.mybatisplus.service.IService;
 public interface IOrderService extends IService<Order> {
 	ResultMessage<Page<Order>> getPageOrderByBuyUserId(Page<Order> page, Order order) throws ParamsException;
 
+	ResultMessage<Page<Order>> getPageOrderBySoldUserId(Page<Order> page, Order order) throws ParamsException;
+
 	ResultMessage<String> addOrder(Order order) throws ParamsException;
 
 	ResultMessage<String> changeOrderStatus(Order order) throws ParamsException;
 
+	ResultMessage<String> getPayUrl(Order order) throws ParamsException;
 
 }
