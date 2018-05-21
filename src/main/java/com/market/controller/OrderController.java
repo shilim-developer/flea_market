@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.google.gson.reflect.TypeToken;
 import com.market.exception.ParamsException;
+import com.market.model.Good;
 import com.market.model.Message;
 import com.market.model.Order;
 import com.market.model.ResultMessage;
 import com.market.model.User;
+import com.market.service.IGoodService;
 import com.market.service.IOrderService;
 import com.market.utils.JsonUtil;
 
@@ -26,10 +28,12 @@ import com.market.utils.JsonUtil;
  * @since 2018-04-16
  */
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/order/user")
 public class OrderController {
 	@Autowired
 	IOrderService orderService;
+	@Autowired
+	IGoodService goodService;
 	
 	@RequestMapping("/getPageOrderByBuyUserId")
 	public ResultMessage<Page<Order>> getPageOrderByBuyUserId(String page,HttpSession session) throws Exception {
@@ -50,8 +54,10 @@ public class OrderController {
 	@RequestMapping("/addOrder")
 	public ResultMessage<String> addOrder(String order,HttpSession session) throws Exception {
 		User user = (User)session.getAttribute("user");
-		return orderService.addOrder(JsonUtil.jsonToObject(order, Order.class)
-				.setBuyUser(user.getUsername()).setBuyUserId(user.getuId()));
+		Order rOrder = JsonUtil.jsonToObject(order, Order.class)
+				.setBuyUser(user.getUsername()).setBuyUserId(user.getuId());
+		goodService.subCount(new Good().setgId(rOrder.getGoodId()).setGoodCount(rOrder.getGoodCount()));
+		return orderService.addOrder(rOrder);
 	}
 	
 	@RequestMapping("/changeOrderStatus")
@@ -59,12 +65,12 @@ public class OrderController {
 		return orderService.addOrder(JsonUtil.jsonToObject(order, Order.class));
 	}
 	
-	@RequestMapping("user/getPayUrl")
+	@RequestMapping("/getPayUrl")
 	public ResultMessage<String> getPayUrl(String order) throws Exception {
 		return orderService.getPayUrl(JsonUtil.jsonToObject(order, Order.class));
 	}
 	
-	@RequestMapping("user/payCallback")
+	@RequestMapping("/payCallback")
 	public String payCallback(String r1_Code,String r2_TrxId,String r6_Order) throws ParamsException {
 		if(r1_Code.equals("1")) {
 			Order order = new Order();
@@ -72,18 +78,18 @@ public class OrderController {
 			order.setPaySerialsNumber(r2_TrxId);
 			order.setStatus(1);
 			orderService.changeOrderStatus(order);
-			return "redirect:http://127.0.0.1:8081/#/orderList";
+			return "redirect:http://tomcat.shilim.cn/market-front/#/orderList";
 		}
 		return null;
 	}
 	
-	@RequestMapping("user/deliver")
+	@RequestMapping("/deliver")
 	public ResultMessage<String> deliver(String order) throws Exception {
 		Order rOrder = JsonUtil.jsonToObject(order, Order.class);
 		return orderService.changeOrderStatus(rOrder.setStatus(2));
 	}
 	
-	@RequestMapping("user/receipt")
+	@RequestMapping("/receipt")
 	public ResultMessage<String> receipt(String order) throws Exception {
 		Order rOrder = JsonUtil.jsonToObject(order, Order.class);
 		return orderService.changeOrderStatus(rOrder.setStatus(3));

@@ -56,5 +56,11 @@ public class UserController {
 	public ResultMessage<String> updatePhone(String user,HttpSession session) throws Exception {
 		return userService.updatePhone(JsonUtil.jsonToObject(user, User.class),session);
 	}
+	
+	@RequestMapping("/updateInformation")
+	public ResultMessage<String> updateInformation(String user,HttpSession session) throws Exception {
+		User mUser = JsonUtil.jsonToObject(user, User.class).setuId(((User)session.getAttribute("user")).getuId());
+		return userService.updateInformation(mUser);
+	}
 }
 

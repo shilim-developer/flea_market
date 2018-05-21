@@ -1,14 +1,23 @@
 package com.market.utils;
 
 import java.lang.reflect.Type;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.market.exception.ParamsException;
 
 /**
  * json与对象转换工具类
  *
  */
 public class JsonUtil {
-	private final static Gson gson = new Gson();
+	private static Gson gson;
+
+	static{
+		GsonBuilder builder = new GsonBuilder();
+		builder.setDateFormat("yyyy-MM-dd HH:mm:ss");
+		gson =builder.create();
+	}
 
 	/**
 	 * json字符串转换成对象
@@ -17,7 +26,13 @@ public class JsonUtil {
 	 * @return T
 	 */
 	public static <T> T jsonToObject(String json,Class<T> clazz) throws Exception {
-		return gson.fromJson(json, clazz);
+		T result = null;
+		try {
+			result = gson.fromJson(json, clazz);
+		} catch (Exception e) {
+			throw new ParamsException("请检查表单填写是否符合规范");
+		}
+		return result;
 	}
 
 	/**
@@ -27,7 +42,13 @@ public class JsonUtil {
 	 * @return T
 	 */
 	public static <T> T jsonToObject(String json,Type type) throws Exception {
-		return gson.fromJson(json, type);
+		T result = null;
+		try {
+			result = gson.fromJson(json, type);
+		} catch (Exception e) {
+			throw new ParamsException("请检查表单填写是否符合规范");
+		}
+		return result;
 	}
 
 	/**

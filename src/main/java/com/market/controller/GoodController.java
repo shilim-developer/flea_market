@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.google.gson.reflect.TypeToken;
+import com.market.exception.ParamsException;
 import com.market.model.Good;
 import com.market.model.ResultMessage;
 import com.market.model.User;
@@ -43,7 +44,7 @@ public class GoodController {
 		return goodService.getGoodByPage(JsonUtil.jsonToObject(page, new TypeToken<Page<Good>>(){}.getType()));
 	}
 	
-	@RequestMapping("user/getPageGoodByClassify")
+	@RequestMapping("getPageGoodByClassify")
 	public ResultMessage<Page<Good>> getPageGoodByClassify(String page,String good) throws Exception {
 		return goodService.getPageGoodByClassify(JsonUtil.jsonToObject(page, new TypeToken<Page<Good>>(){}.getType()),
 				JsonUtil.jsonToObject(good, Good.class));
@@ -65,21 +66,33 @@ public class GoodController {
 		return goodService.getGoodById(JsonUtil.jsonToObject(good,Good.class));
 	}
 	
-	@RequestMapping("/addGood")
+	@RequestMapping("/user/addGood")
 	public ResultMessage<String> addGood(String good,HttpSession session,HttpServletRequest request) throws Exception {
 		Good rGood = JsonUtil.jsonToObject(good,Good.class);
 		rGood.setuId(((User)session.getAttribute("user")).getuId());
 		return goodService.addGood(rGood,request);
 	}
 	
-	@RequestMapping("/updateGood")
+	@RequestMapping("/user/updateGood")
 	public ResultMessage<String> updateGood(String good) throws Exception {
 		return goodService.updateGood(JsonUtil.jsonToObject(good,Good.class));
 	}
 	
-	@RequestMapping("/deleteGood")
+	@RequestMapping("/user/deleteGood")
 	public ResultMessage<String> deleteGood(String goods) throws Exception {
 		return goodService.deleteGood(JsonUtil.jsonToObject(goods,new TypeToken<List<Good>>(){}.getType()));
+	}
+	
+	@RequestMapping("/getUserOtherGood")
+	public ResultMessage<List<Good>> getUserOtherGood(String good) throws ParamsException, Exception {
+		return goodService.getUserOtherGood(JsonUtil.jsonToObject(good,Good.class));
+	}
+	
+	@RequestMapping("/user/uploadGoodImage")
+	public ResultMessage<String> uploadGoodImage(String good,HttpSession session,HttpServletRequest request) throws Exception {
+		Good rGood = JsonUtil.jsonToObject(good,Good.class);
+		rGood.setuId(((User)session.getAttribute("user")).getuId());
+		return goodService.uploadGoodImage(rGood,request);
 	}
 	
 	@RequestMapping("/admin/passCheck")

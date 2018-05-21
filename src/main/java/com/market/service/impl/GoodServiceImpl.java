@@ -86,7 +86,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodDao, Good> implements IGood
 	
 	@Override
 	public ResultMessage<Page<Good>> getPageGoodByClassify(Page<Good> page, Good good) {
-		Wrapper<Good> wapper = new EntityWrapper<Good>();
+		Wrapper<Good> wapper = new EntityWrapper<Good>().eq("status", 1).gt("good_surplus", 0);
 		if(good.getcId() > 0) {
 			wapper = wapper.eq("c_id", good.getcId());
 		}
@@ -114,8 +114,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodDao, Good> implements IGood
 
 	@Override
 	public ResultMessage<String> addGood(Good good,HttpServletRequest request) throws ParamsException {
-		System.out.println(good);
-		validatorUtil.validate(good);
+		validatorUtil.validate(good,Good.Addition.class);
 		String goodsPhotoUrl = "market_upload/user/" + good.getuId() + "/goods/" + UUID.randomUUID() + ".jpeg";
 		String saveUrl = request.getServletContext().getRealPath("/") + "../" + goodsPhotoUrl;
 		boolean saveResult = Base64Util.GenerateImage(good.getGoodPics(), saveUrl);
@@ -131,7 +130,7 @@ public class GoodServiceImpl extends ServiceImpl<GoodDao, Good> implements IGood
 
 	@Override
 	public ResultMessage<String> updateGood(Good good) throws ParamsException {
-		validatorUtil.validate(good);
+		validatorUtil.validate(good,Good.Edition.class);
 		updateById(good);
 		return new ResultMessage<String>(true, ResultCode.SUCCESS, "修改成功", null);
 	}
@@ -145,6 +144,32 @@ public class GoodServiceImpl extends ServiceImpl<GoodDao, Good> implements IGood
 		}
 		deleteBatchIds(ids);
 		return new ResultMessage<String>(true, ResultCode.SUCCESS, "删除成功", null);
+	}
+	
+	@Override
+	public ResultMessage<List<Good>> getUserOtherGood(Good good) throws ParamsException {
+		int count = good.selectCount(new EntityWrapper<Good>().eq("status", 1).eq("u_id", good.getuId()));
+		int start = (int)(0+Math.random()*(count-2-1+1));
+		return new ResultMessage<List<Good>>(true, ResultCode.SUCCESS, "获取成功",
+				selectList(new EntityWrapper<Good>().eq("status", 1).eq("u_id", good.getuId()).last("LIMIT "+start+",2")));
+	}
+	
+	@Override
+	public ResultMessage<String> uploadGoodImage(Good good,HttpServletRequest request) {
+		ResultMessage<String> resultMessage;
+		if(Base64Util.imageSize(good.getGoodPics())>5*1024*1025) {
+			resultMessage =  new ResultMessage<String>(true, ResultCode.FAIL, "请上传少于5M的图片", null);
+		} else {
+			String goodsPhotoUrl = "market_upload/user/" + good.getuId() + "/goods/" + UUID.randomUUID() + ".jpeg";
+			String saveUrl = request.getServletContext().getRealPath("/") + "../" + goodsPhotoUrl;
+			boolean saveResult = Base64Util.GenerateImage(good.getGoodPics(), saveUrl);
+			if (saveResult) {
+				resultMessage = new ResultMessage<String>(true, ResultCode.SUCCESS, "上传成功", "/"+goodsPhotoUrl);
+			} else {
+				resultMessage = new ResultMessage<String>(true, ResultCode.FAIL, "图片上传失败", null);
+			}
+		}
+		return resultMessage;
 	}
 
 	@Override
@@ -162,6 +187,16 @@ public class GoodServiceImpl extends ServiceImpl<GoodDao, Good> implements IGood
 		updateById(good);
 		return new ResultMessage<String>(true, ResultCode.SUCCESS, "拒绝通过审核成功", null);
 	}
+
+	@Override
+	public ResultMessage<String> subCount(Good good) throws ParamsException {
+		validatorUtil.validate(good);
+		Good rGood = good.selectById();
+		rGood.setGoodSurplus(rGood.getGoodSurplus() - good.getGoodCount());
+		updateById(rGood);
+		return new ResultMessage<String>(true, ResultCode.SUCCESS, "减数量成功", null);
+	}
+
 
 
 

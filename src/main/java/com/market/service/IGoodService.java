@@ -30,6 +30,11 @@ public interface IGoodService extends IService<Good> {
 	public abstract ResultMessage<String> addGood(Good good,HttpServletRequest request) throws ParamsException;
 	public abstract ResultMessage<String> updateGood(Good good) throws ParamsException;
 	public abstract ResultMessage<String> deleteGood(List<Good> goods) throws ParamsException;
+	public abstract ResultMessage<List<Good>> getUserOtherGood(Good good) throws ParamsException;
+	public abstract ResultMessage<String> uploadGoodImage(Good good,HttpServletRequest request);
+	
+	
 	public abstract ResultMessage<String> passCheck(Good good) throws ParamsException;
 	public abstract ResultMessage<String> unpassCheck(Good good) throws ParamsException;
+	public abstract ResultMessage<String> subCount(Good good) throws ParamsException;
 }

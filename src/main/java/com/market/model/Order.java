@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * <p>
@@ -57,6 +58,7 @@ public class Order extends Model<Order> {
 	/**
 	 * 创建时间
 	 */
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8") 
 	@TableField("create_time")
 	private Date createTime;
 	/**

@@ -31,7 +31,7 @@ public class MessageController {
 	@Autowired
 	IMessageService messageService;
 	
-	@RequestMapping("/getPageMessageListByToUser")
+	@RequestMapping("/user/getPageMessageListByToUser")
 	public ResultMessage<Page<Message>> getPageMessageListByToUser(String page, HttpSession session) throws Exception {
 		Message message = new Message().setToUser(((User)session.getAttribute("user")).getuId());
 		return messageService.getPageMessageListByToUser(
@@ -39,31 +39,31 @@ public class MessageController {
 				message);
 	}
 	
-	@RequestMapping("/getPageMessageListByStatus")
+	@RequestMapping("/user/getPageMessageListByStatus")
 	public ResultMessage<Page<Message>> getPageMessageListByStatus(String page, String message) throws Exception {
 		return messageService.getPageMessageListByStatus(
 				JsonUtil.jsonToObject(page, new TypeToken<Page<Message>>(){}.getType()), 
 				JsonUtil.jsonToObject(message, Message.class));
 	}
 	
-	@RequestMapping("/getMessageById")
+	@RequestMapping("/user/getMessageById")
 	public ResultMessage<Message> getMessageById(String message) throws Exception {
 		return messageService.getMessageById(JsonUtil.jsonToObject(message, Message.class));
 	}
 	
-	@RequestMapping("/sendMessage")
+	@RequestMapping("/user/sendMessage")
 	public ResultMessage<String> sendMessage(String message,HttpSession session) throws Exception {
 		Message rMessage = JsonUtil.jsonToObject(message, Message.class);
 		rMessage.setFromUser(((User)session.getAttribute("user")).getuId());
 		return messageService.sendMessage(rMessage);
 	}
 	
-	@RequestMapping("/readMessage")
+	@RequestMapping("/user/readMessage")
 	public ResultMessage<String> readMessage(String message) throws Exception {
 		return messageService.readMessage(JsonUtil.jsonToObject(message, Message.class));
 	}
 	
-	@RequestMapping("/deleteMessage")
+	@RequestMapping("/user/deleteMessage")
 	public ResultMessage<String> deleteMessage(String messages) throws Exception {
 		return messageService.deleteMessage(JsonUtil.jsonToObject(messages, new TypeToken<List<Message>>(){}.getType()));
 	}

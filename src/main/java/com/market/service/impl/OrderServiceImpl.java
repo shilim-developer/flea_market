@@ -91,7 +91,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements IO
 					p5_Pid = rOrder.getOrderNumber() + "", // 商品名称
 					p6_Pcat = "", // 商品种类
 					p7_Pdesc = "", // 商品描述
-					p8_Url = "http://127.0.0.1:8080/market/order/user/payCallback.do", // 支付成功回调
+					p8_Url = "http://tomcat.shilim.cn/market/user/payCallback.do", // 支付成功回调
 					p9_SAF = "", // 收货地址
 					pa_MP = "", // 商户扩展信息
 					pd_FrpId = "", // 银行编码

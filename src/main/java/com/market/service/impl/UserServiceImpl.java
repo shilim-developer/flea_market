@@ -1,19 +1,19 @@
 package com.market.service.impl;
 
-import com.market.model.ResultMessage;
-import com.market.model.User;
-import com.market.constant.ResultCode;
-import com.market.dao.UserDao;
-import com.market.exception.ParamsException;
-import com.market.service.IUserService;
-import com.market.utils.ValidatorUtil;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.market.constant.ResultCode;
+import com.market.dao.UserDao;
+import com.market.exception.ParamsException;
+import com.market.model.ResultMessage;
+import com.market.model.User;
+import com.market.service.IUserService;
+import com.market.utils.ValidatorUtil;
 
 /**
  * <p>
@@ -80,11 +80,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
 	@Override
 	public ResultMessage<String> updatePassword(User user,HttpSession session) throws ParamsException {
-		validatorUtil.validate(user);
+		validatorUtil.validate(user,User.UpdatePassword.class);
 		User rUser = (User) session.getAttribute("user");
 		rUser = rUser.selectById();
 		ResultMessage<String> resultMessage = null;
-		if(rUser.getPassword().equals(user.getPassword())) {
+		if(rUser.getPassword().equals(user.getOldPassword())) {
 			rUser.setPassword(user.getPassword());
 			updateById(rUser);
 			resultMessage = new ResultMessage<String>(false,ResultCode.SUCCESS,"修改成功",null);
@@ -100,6 +100,16 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 		User rUser = (User) session.getAttribute("user");
 		rUser = rUser.selectById();
 		rUser.setPhone(user.getPhone());
+		updateById(rUser);
+		return new ResultMessage<String>(false,ResultCode.SUCCESS,"修改成功",null);
+	}
+
+	@Override
+	public ResultMessage<String> updateInformation(User user) throws ParamsException {
+		validatorUtil.validate(user,User.UpdateUser.class);
+		User rUser = user.selectById();
+		rUser.setNickname(user.getNickname()).setSex(user.getSex())
+		.setPhone(user.getPhone()).setEmail(user.getEmail());;
 		updateById(rUser);
 		return new ResultMessage<String>(false,ResultCode.SUCCESS,"修改成功",null);
 	}

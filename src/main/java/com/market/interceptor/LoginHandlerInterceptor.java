@@ -53,7 +53,7 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 					out.close();
 					return false;
 				}
-			} else{
+			} else if (requestURI.indexOf("/user") > 0){
 				User user = (User) session.getAttribute("user");
 				if (user != null) {
 					System.out.println("已登录");
@@ -67,6 +67,7 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 					return false;
 				}
 			}
+			return true;
 		}else {
 			return true;
 		}
