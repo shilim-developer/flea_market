@@ -56,8 +56,9 @@ public class OrderController {
 		User user = (User)session.getAttribute("user");
 		Order rOrder = JsonUtil.jsonToObject(order, Order.class)
 				.setBuyUser(user.getUsername()).setBuyUserId(user.getuId());
+		ResultMessage<String> message = orderService.addOrder(rOrder);
 		goodService.subCount(new Good().setgId(rOrder.getGoodId()).setGoodCount(rOrder.getGoodCount()));
-		return orderService.addOrder(rOrder);
+		return message;
 	}
 	
 	@RequestMapping("/changeOrderStatus")

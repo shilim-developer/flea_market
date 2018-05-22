@@ -53,7 +53,7 @@ public class ClassifyController {
 		return classifyService.updateClassify(JsonUtil.jsonToObject(classify, Classify.class));
 	}
 	
-	@RequestMapping("/deleteClassify")
+	@RequestMapping("/admin/deleteClassify")
 	public ResultMessage<String> deleteClassify(String classifies) throws Exception {
 		return classifyService.updateClassify(JsonUtil.jsonToObject(classifies, new TypeToken<List<Classify>>(){}.getType()));
 	}
